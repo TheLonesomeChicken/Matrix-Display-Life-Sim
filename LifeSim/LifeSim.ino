@@ -64,10 +64,10 @@ uint64_t randUint64Slow()
 
 uint64_t** fillWorld()
 {
-  uint64_t** world = (uint64_t**)malloc(worldSizeX * sizeof(int*));
+  uint64_t** world = (uint64_t**)malloc(worldSizeX * sizeof(uint64_t*));
   for (int i = 0; i < worldSizeX; i++)
   {
-    world[i] = (uint64_t*)malloc(worldSizeY * sizeof(int));
+    world[i] = (uint64_t*)malloc(worldSizeY * sizeof(uint64_t));
   }
 
   for (int x = 0; x < worldSizeX; x++)
@@ -125,8 +125,18 @@ uint64_t** executeGenomeInstruction(uint64_t** world, int genomeIdX, int genomeI
   else if (instruction == 0b01) // C
   {
     // try to make a copy
-    int selectedNeighborIdX = neighborId(genomeIdX, worldSizeX);
-    int selectedNeighborIdY = neighborId(genomeIdY, worldSizeY);
+    int selectedNeighborIdX;
+    int selectedNeighborIdY;
+    if (random(2) == 0)
+    {
+      selectedNeighborIdX = neighborId(genomeIdX, worldSizeX);
+      selectedNeighborIdY = genomeIdY;
+    }
+    else
+    {
+      selectedNeighborIdX = genomeIdX;
+      selectedNeighborIdY = neighborId(genomeIdY, worldSizeY);
+    }
     
     if (world[selectedNeighborIdX][selectedNeighborIdY] == 0b0)
     {
@@ -141,9 +151,18 @@ uint64_t** executeGenomeInstruction(uint64_t** world, int genomeIdX, int genomeI
   else if (instruction == 0b11) // T
   {
     // try to move
-    
-    int selectedNeighborIdX = neighborId(genomeIdX, worldSizeX);
-    int selectedNeighborIdY = neighborId(genomeIdY, worldSizeY);
+    int selectedNeighborIdX;
+    int selectedNeighborIdY;
+    if (random(2) == 0)
+    {
+      selectedNeighborIdX = neighborId(genomeIdX, worldSizeX);
+      selectedNeighborIdY = genomeIdY;
+    }
+    else
+    {
+      selectedNeighborIdX = genomeIdX;
+      selectedNeighborIdY = neighborId(genomeIdY, worldSizeY);
+    }
 
     if (world[selectedNeighborIdX][selectedNeighborIdY] == 0b0)
     {
