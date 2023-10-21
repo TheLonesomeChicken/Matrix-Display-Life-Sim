@@ -118,11 +118,11 @@ uint64_t mutate(uint64_t genome)
 
 uint64_t** executeGenomeInstruction(uint64_t** world, int genomeIdX, int genomeIdY, uint8_t instruction)
 {
-  if (instruction == 0b000) // A
+  if (instruction == 0b00) // A
   {
     // do nothing
   }
-  else if (instruction == 0b001) // C
+  else if (instruction == 0b01) // C
   {
     // try to make a copy
     int selectedNeighborIdX;
@@ -143,20 +143,25 @@ uint64_t** executeGenomeInstruction(uint64_t** world, int genomeIdX, int genomeI
       world[selectedNeighborIdX][selectedNeighborIdY] = mutate(world[genomeIdX][genomeIdY]);
     }
   }
-  else if (instruction == 0b010) // G
+  else if (instruction == 0b10) // G
   {
     // kys
     world[neighborId(genomeIdX, worldSizeX)][neighborId(genomeIdY, worldSizeY)] = 0b00;
   }
-  else if (instruction == 0b011) // T
+  else if (instruction == 0b11) // T
   {
     // try to move
-    int selectedNeighborIdX = genomeIdX - 1;
-    int selectedNeighborIdY = genomeIdY;
-
-    if (selectedNeighborIdX < 0)
+    int selectedNeighborIdX;
+    int selectedNeighborIdY;
+    if (random(2) == 0)
     {
-      return world;
+      selectedNeighborIdX = neighborId(genomeIdX, worldSizeX);
+      selectedNeighborIdY = genomeIdY;
+    }
+    else
+    {
+      selectedNeighborIdX = genomeIdX;
+      selectedNeighborIdY = neighborId(genomeIdY, worldSizeY);
     }
 
     if (world[selectedNeighborIdX][selectedNeighborIdY] == 0b0)
@@ -164,61 +169,6 @@ uint64_t** executeGenomeInstruction(uint64_t** world, int genomeIdX, int genomeI
       world[selectedNeighborIdX][selectedNeighborIdY] = world[genomeIdX][genomeIdY];
       world[genomeIdX][genomeIdY] = 0b00;
     }
-  }
-  else if (instruction == 0b100) // W
-  {
-    // try to move
-    int selectedNeighborIdX = genomeIdX + 1;
-    int selectedNeighborIdY = genomeIdY;
-
-    if (selectedNeighborIdX > worldSizeX)
-    {
-      return world;
-    }
-
-    if (world[selectedNeighborIdX][selectedNeighborIdY] == 0b0)
-    {
-      world[selectedNeighborIdX][selectedNeighborIdY] = world[genomeIdX][genomeIdY];
-      world[genomeIdX][genomeIdY] = 0b00;
-    }
-  }
-  else if (instruction == 0b101) // X
-  {
-    // try to move
-    int selectedNeighborIdX = genomeIdX;
-    int selectedNeighborIdY = genomeIdY - 1;
-
-    if (selectedNeighborIdY < 0)
-    {
-      return world;
-    }
-
-    if (world[selectedNeighborIdX][selectedNeighborIdY] == 0b0)
-    {
-      world[selectedNeighborIdX][selectedNeighborIdY] = world[genomeIdX][genomeIdY];
-      world[genomeIdX][genomeIdY] = 0b00;
-    }
-  }
-  else if (instruction == 0b110) // Y
-  {
-    // try to move
-    int selectedNeighborIdX = genomeIdX;
-    int selectedNeighborIdY = genomeIdY + 1;
-
-    if (selectedNeighborIdY > worldSizeY)
-    {
-      return world;
-    }
-
-    if (world[selectedNeighborIdX][selectedNeighborIdY] == 0b0)
-    {
-      world[selectedNeighborIdX][selectedNeighborIdY] = world[genomeIdX][genomeIdY];
-      world[genomeIdX][genomeIdY] = 0b00;
-    }
-  }
-  else if (instruction == 0b111) // Z
-  {
-    
   }
 
   return world;
@@ -231,9 +181,9 @@ uint64_t** runAllGenomeCode(uint64_t** world, int genomeIdX, int genomeIdY, uint
     return world;
   }
   
-  for (uint8_t instructionId = 0; instructionId < 64; instructionId += 4)
+  for (uint8_t instructionId = 0; instructionId < 64; instructionId += 2)
   {
-    world = executeGenomeInstruction(world, genomeIdX, genomeIdY, (genome >> instructionId) & 0b111);
+    world = executeGenomeInstruction(world, genomeIdX, genomeIdY, (genome >> instructionId) & 0b11);
     
     if (world[genomeIdX][genomeIdY] == 0b0)
     {
@@ -255,17 +205,6 @@ uint64_t** runWorld(uint64_t** world)
   }
 
   world[random(worldSizeX)][random(worldSizeY)] = 0b0;
-
-  if (random(25) == 0)
-  {
-    for (int x = worldSizeX / 2; x < worldSizeX; x++)
-    {
-      for (int y = worldSizeY / 2; y < worldSizeY; y++)
-      {
-        world[x][y] = 0b0;
-      }
-    }
-  }
   
   return world;
 }
