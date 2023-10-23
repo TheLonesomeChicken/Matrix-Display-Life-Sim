@@ -43,7 +43,7 @@ void loop(void)
     {
       if (mainWorld[x][y] != 0b0)
       {
-        matrix.drawPixel(x, y, mainWorld[x][y] / 2);
+        matrix.drawPixel(x, y, mainWorld[x][y] / 4);
       }
     }
   }
